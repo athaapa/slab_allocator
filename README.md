@@ -8,6 +8,18 @@ A deterministic, $O(1)$ memory allocator designed for high-frequency trading (HF
 
 **Key Metric:** 8.5x faster than standard `malloc` for linear allocation, and **4.5x faster (1.65ns/op)** under high-churn load.
 
+```
+.
+├── src/
+│   ├── slab.c         # Allocator Implementation
+│   ├── bench_alloc.c  # Performance Harness
+├── include/
+│   ├── slab.h         # Public API
+│   ├── order.h        # LimitOrder Definition
+├── tests/             # Geometry Verification
+└── Makefile           # Build System
+```
+
 ---
 
 ## Executive Summary
@@ -18,6 +30,35 @@ In latency-critical systems (HFT, Real-Time Embedded), the non-deterministic nat
 3.  **Syscalls:** Occasional `brk` or `mmap` calls that pause execution.
 
 This Slab Allocator solves these issues by pre-allocating a contiguous block of memory and managing it as a LIFO stack. Pointers to free slots are embedded directly within the free blocks themselves, requiring **zero external metadata** per object.
+
+## Building and Running
+
+### Prerequisites
+- GCC compiler supporting C11 standard
+- Make build system
+- Linux x86_64 platform
+- The code is optimized for deterministic latency; the benchmark is the most important part of the build process
+
+### Build the Project
+```bash
+make
+```
+
+### Run the Benchmark
+```bash
+./bench_alloc
+```
+
+### Verification & Memory Safety
+This runs the layout verifier, which validates the 64-byte alignment critical for cache-line hits.
+```bash
+make test
+```
+
+### Clean
+```bash
+make clean
+```
 
 ---
 
@@ -36,4 +77,3 @@ Operation                | Malloc (ns/op) |   Slab (ns/op) |        Speedup
 Allocation (Linear)      |          63.68 |           7.30 |          8.72x
 Deallocation (Linear)    |          11.49 |           7.39 |          1.56x
 Hot Churn (100 batch)    |           7.80 |           1.66 |          4.69x
-================================================================================

@@ -1,0 +1,15 @@
+# Build directory
+build/
+
+# Object files
+*.o
+
+# Executables
+bench_alloc
+verify_layout
+
+# Cache directories
+.cache/
+
+# Compilation database (if generated)
+compile_commands.json
