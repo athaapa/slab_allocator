@@ -147,7 +147,6 @@ int main() {
     // Warm up: Allocate 10,000 orders
     for (int i = 0; i < SWISS_WARMUP; i++) {
         active_orders[i] = slab_alloc();
-        is_filled[i] = true;
     }
 
     // The Loop: 1,000,000 iterations
